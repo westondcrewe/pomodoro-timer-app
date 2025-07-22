@@ -6,53 +6,39 @@ import { usePomodoroTimer } from './hooks/usePomodoroTimer.ts';
 import './App.css';
 
 function App() {
-  const handleStartSession = () => {
-    // if (!startTimeSetRef.current) {
-    //   const now = new Date();
-    //   const formatted = now.toLocaleTimeString([], {
-    //     hour: 'numeric',
-    //     minute: '2-digit',
-    //   });
-    //   setStartTime(formatted);
-    //   startTimeSetRef.current = true;
-    // }
-
-    // setIsRunning(true);
-    console.log('Session Complete!');
+  // Callback for when a session completes
+  const handleSessionComplete = () => {
+    // Example: play a sound, show a notification, etc.
+    if (Notification.permission === "granted") {
+      new Notification("Pomodoro Timer", {
+        body: "Session complete! Time to switch.",
+        // icon: "/path/to/icon.png", // Optional: add your app icon
+      });
+    }
+    // Optionally, play a sound here
+    const audio = new Audio("client/src/assets/timer-sound.mp3");
+    audio.play();
+    console.log("Session complete!");
   };
 
+  // Use the Pomodoro timer hook, passing the session complete callback
   const {
     time,
     mode,
     isRunning,
     startTime,
     rounds,
-    //setTime,
-    //setStartTime,
-    //setRounds,
-    //setIsRunning,
     start,
     pause,
     reset,
-  } = usePomodoroTimer();
-
-  //const startTimeSetRef = useRef(false);
-  const defaultWorkDuration = 25 * 60;
-
-  // const handleReset = () => {
-  //   setIsRunning(false);
-  //   setTime(defaultWorkDuration);
-  //   setStartTime('');
-  //   setRounds(0);
-  //   startTimeSetRef.current = false;
-  // };
+  } = usePomodoroTimer(handleSessionComplete);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-100 via-blue-100 to-green-100 transition-colors duration-1000">
       {/* Top Bank Row */}
       <div className="flex gap-6 mb-8">
-      <Bank label="Start Time" value={startTime} />
-      <Bank label="Rounds" value={String(rounds)} />
+        <Bank label="Start Time" value={startTime} />
+        <Bank label="Rounds" value={String(rounds)} />
       </div>
 
       {/* Timer in center */}
@@ -65,6 +51,7 @@ function App() {
       {/* Bottom Button Row */}
       <div className="flex gap-6">
         <Button onClick={start} variant="primary">
+          {mode === 'work' ? 'Work ' : mode === 'break' ? 'Break ' : 'Long Break '}
         </Button>
         <Button onClick={pause} variant="secondary">
         </Button>

@@ -1,5 +1,5 @@
 // manages logic of timer:
-// countdown logic, session control, mode switching, statistics data collection
+// countdown logic, session control, mode switching, statistics collection
 import { useState, useRef, useEffect, useCallback } from "react";
 
 const WORK_DURATION = 25 * 60;
@@ -41,6 +41,9 @@ export function usePomodoroTimer(onSessionComplete?: () => void) {
 
   // Timer countdown effect
   useEffect(() => {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
     if (isRunning) {
       intervalRef.current = setInterval(() => {
         setTime((prev) => {

@@ -14,13 +14,6 @@ The Pomodoro Timer App is a full-stack productivity tool designed to help users 
 - Session statistic tracking for start time and Pomodoro round count (worktime management habits) stored in MongoDB
 - System notifications and optional sound alerts for background operation
 
-## Project Structure
-```
-pomodoro-timer-app/
-  client/    # React frontend (Vite, TailwindCSS)
-  server/    # Node.js/Express backend (API, MongoDB)
-```
-
 ## How It Works
 - The frontend provides a single-page application for timer control, session display, and statistics.
 - The backend exposes RESTful APIs for user data and session tracking, connecting to a MongoDB database.

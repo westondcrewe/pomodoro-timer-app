@@ -4,18 +4,15 @@
 The Pomodoro Timer App is a full-stack productivity tool designed to help users manage their work and break intervals using the Pomodoro Technique. The application enables users to track their worktime management habits, visualize session statistics, and build better focus routines.
 
 ## Tech Stack
-- **Frontend:** React (with Vite for fast development), TailwindCSS for modern, responsive UI
-- **Backend:** Node.js with Express.js (MERN stack)
-- **Database:** MongoDB for persistent storage of user work session data and statistics
-- **Other:** TypeScript (for type safety), custom React hooks, modular component architecture
+- **Frontend:** React, Vite for build, TailwindCSS for UI
+- **Backend:** Node.js with Express.js
+- **Database:** MongoDB for storage of user work session statistics
+- **Other:** TypeScript, custom React hooks, modular component architecture
 
 ## Features
-- Interactive Pomodoro timer with work, short break, and long break cycles
-- Session and round tracking
-- Responsive, accessible UI with a custom color palette (TailwindCSS)
+- Interactive Pomodoro timer with work/break cycles
+- Session statistic tracking for start time and Pomodoro round count (worktime management habits) stored in MongoDB
 - System notifications and optional sound alerts for background operation
-- Persistent user data and statistics (worktime management habits) stored in MongoDB
-- Clean separation of frontend and backend codebases
 
 ## Project Structure
 ```

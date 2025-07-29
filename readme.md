@@ -22,7 +22,15 @@ The Pomodoro Timer App is a full-stack productivity tool designed to help users 
 ## Getting Started
 1. Clone the repository
 2. Install dependencies in both `client/` and `server/`
-3. Start the backend and frontend servers
+3. Set up environment variables:
+   - Copy `server/env.example` to `server/.env`
+   - Update the values with your configuration
+4. Start the backend and frontend servers
+
+## Security
+- Environment variables (`.env` files) are automatically ignored by Git
+- Sensitive data like JWT secrets and database credentials are protected
+- Never commit `.env` files to version control
 
 ---
 

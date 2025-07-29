@@ -58,4 +58,7 @@ const userStatsSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Index for efficient queries
+userStatsSchema.index({ userId: 1 }, { unique: true });
+
 module.exports = mongoose.model('UserStats', userStatsSchema);

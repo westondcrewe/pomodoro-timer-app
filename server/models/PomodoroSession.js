@@ -29,9 +29,18 @@ const pomodoroSessionSchema = new mongoose.Schema({
   rounds: {
     type: Number,
     default: 0
+  },
+  notes: {
+    type: String,
+    trim: true,
+    maxlength: 500
   }
 }, {
   timestamps: true
 });
+
+// Index for efficient queries
+pomodoroSessionSchema.index({ userId: 1, startTime: -1 });
+pomodoroSessionSchema.index({ startTime: -1 });
 
 module.exports = mongoose.model('PomodoroSession', pomodoroSessionSchema);

@@ -105,6 +105,12 @@ Thumbs.db
 test-results/
 coverage/
 
+# Test scripts with credentials
+test-api.sh
+quick-db-view.sh
+view-database.sh
+view-database-simple.sh
+
 # Local development
 .local/
 local/

@@ -31,6 +31,17 @@ The Pomodoro Timer App is a full-stack productivity tool designed to help users 
 - Environment variables (`.env` files) are automatically ignored by Git
 - Sensitive data like JWT secrets and database credentials are protected
 - Never commit `.env` files to version control
+- Test scripts with credentials are excluded from version control
+- Use `test-api-template.sh` as a starting point for your own test scripts
+
+## CI/CD Pipeline
+This project includes comprehensive GitHub Actions workflows for:
+- **Automated Testing**: Frontend, backend, and API integration tests
+- **Security Scanning**: Dependency vulnerabilities, code analysis, and secret detection
+- **Deployment**: Support for Heroku, Vercel, Netlify, and Docker deployments
+- **Quality Assurance**: Linting, building, and automated quality checks
+
+See `.github/README.md` for detailed setup and usage instructions.
 
 ---
 

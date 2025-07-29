@@ -1,0 +1,176 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      platform:
+        description: 'Platform to deploy to'
+        required: true
+        default: 'heroku'
+        type: choice
+        options:
+        - heroku
+        - vercel
+        - netlify
+        - docker
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Deploy to Heroku
+  deploy-heroku:
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+    if: github.event.inputs.platform == 'heroku'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: Install Heroku CLI
+      run: |
+        curl https://cli-assets.heroku.com/install.sh | sh
+        
+    - name: Deploy to Heroku
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      run: |
+        # Login to Heroku
+        heroku auth:token
+        
+        # Set environment variables
+        heroku config:set NODE_ENV=${{ github.event.inputs.environment }} --app ${{ secrets.HEROKU_APP_NAME }}
+        heroku config:set MONGODB_URI=${{ secrets.MONGODB_URI }} --app ${{ secrets.HEROKU_APP_NAME }}
+        heroku config:set JWT_SECRET=${{ secrets.JWT_SECRET }} --app ${{ secrets.HEROKU_APP_NAME }}
+        
+        # Deploy
+        git push heroku main
+
+  # Deploy to Vercel
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    if: github.event.inputs.platform == 'vercel'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./client
+
+  # Deploy to Netlify
+  deploy-netlify:
+    name: Deploy to Netlify
+    runs-on: ubuntu-latest
+    if: github.event.inputs.platform == 'netlify'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: ./client
+      run: npm ci
+      
+    - name: Build
+      working-directory: ./client
+      run: npm run build
+      
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './client/dist'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy from GitHub Actions"
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+  # Deploy with Docker
+  deploy-docker:
+    name: Deploy with Docker
+    runs-on: ubuntu-latest
+    if: github.event.inputs.platform == 'docker'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: Build and push backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./server
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/pomodoro-backend:${{ github.sha }}
+        
+    - name: Build and push frontend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./client
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/pomodoro-frontend:${{ github.sha }}
+        
+    - name: Deploy to server
+      run: |
+        # SSH to your server and pull/run the new images
+        # This is a placeholder - you'll need to customize this for your setup
+        echo "Deploying Docker images to server..."
+        # ssh user@your-server "docker-compose pull && docker-compose up -d"
+
+  # Notify deployment
+  notify:
+    name: Notify Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-heroku, deploy-vercel, deploy-netlify, deploy-docker]
+    if: always()
+    
+    steps:
+    - name: Notify success
+      if: success()
+      run: |
+        echo "✅ Deployment to ${{ github.event.inputs.environment }} completed successfully!"
+        # Add your notification logic here (Slack, Discord, email, etc.)
+        
+    - name: Notify failure
+      if: failure()
+      run: |
+        echo "❌ Deployment to ${{ github.event.inputs.environment }} failed!"
+        # Add your notification logic here (Slack, Discord, email, etc.) 

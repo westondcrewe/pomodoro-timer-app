@@ -1,4 +1,8 @@
 # Pomodoro Timer App
+![CI](https://github.com/westondcrewe/pomodoro-timer-app/actions/workflows/ci-cd.yml/badge.svg)
+![CI](https://github.com/westondcrewe/pomodoro-timer-app/actions/workflows/deploy.yml/badge.svg)
+![CI](https://github.com/westondcrewe/pomodoro-timer-app/actions/workflows/security.yml/badge.svg)
+![CI](https://github.com/westondcrewe/pomodoro-timer-app/actions/workflows/test.yml/badge.svg)
 
 ## Overview
 The Pomodoro Timer App is a full-stack productivity tool designed to help users manage their work and break intervals using the Pomodoro Technique. The application enables users to track their worktime management habits, visualize session statistics, and build better focus routines.
